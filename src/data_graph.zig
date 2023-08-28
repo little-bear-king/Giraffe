@@ -7,14 +7,14 @@ const AutoArrayHashMap = std.AutoArrayHashMap;
 const mem = std.mem;
 const testing_alloc = std.testing.allocator;
 
-pub fn DataGraph(comptime index_type: type, comptime node_type: type, comptime edge_type: type, directed: bool) type {
+pub fn DataGraph(comptime index_type: type, comptime node_type: type, comptime edge_type: type, comptime directed: bool) type {
     return struct {
         const Self = @This();
         graph: graph(index_type, directed),
         node_data: AutoArrayHashMap(index_type, node_type),
         edge_data: AutoArrayHashMap(index_type, edge_type),
-        allocator: *mem.Allocator,
-        pub fn init(alloc: *mem.Allocator) Self {
+        allocator: mem.Allocator,
+        pub fn init(alloc: mem.Allocator) Self {
             return Self{ .graph = graph(index_type, directed).init(alloc), .node_data = AutoArrayHashMap(index_type, node_type).init(alloc), .edge_data = AutoArrayHashMap(index_type, edge_type).init(alloc), .allocator = alloc };
         }
         pub fn deinit(self: *Self) !void {

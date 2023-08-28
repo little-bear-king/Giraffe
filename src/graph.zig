@@ -8,14 +8,14 @@ const alloc = std.testing.allocator;
 
 pub const GraphError = error{ NodeAlreadyExists, EdgeAlreadyExists, NodesDoNotExist, EdgesDoNotExist };
 
-pub fn Graph(comptime index_type: type, dir: bool) type {
+pub fn Graph(comptime index_type: type, comptime dir: bool) type {
     return struct {
         const Self = @This();
         directed: bool = dir,
         graph: AutoArrayHashMap(index_type, AutoArrayHashMap(index_type, index_type)),
         edge_list: AutoArrayHashMap(index_type, [2]index_type),
-        allocator: *mem.Allocator,
-        pub fn init(alloc_in: *mem.Allocator) Self {
+        allocator: mem.Allocator,
+        pub fn init(alloc_in: mem.Allocator) Self {
             return Self{ .graph = AutoArrayHashMap(index_type, AutoArrayHashMap(index_type, index_type)).init(alloc_in), .edge_list = AutoArrayHashMap(index_type, [2]index_type).init(alloc_in), .allocator = alloc_in };
         }
         pub fn deinit(self: *Self) !void {
@@ -165,7 +165,7 @@ pub fn Graph(comptime index_type: type, dir: bool) type {
                 var node_itr = entry.value_ptr.iterator();
                 while (node_itr.next()) |value| {
                     std.debug.print("\t->Edge To: {}", .{value.value_ptr.*});
-                    std.debug.print(" With ID: {}", .{value.key_ptr.*});
+                    std.debug.print(" With ID: {}\n", .{value.key_ptr.*});
                 }
             }
         }
